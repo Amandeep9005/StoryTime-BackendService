@@ -15,7 +15,8 @@ const io = require("socket.io")(http,{
  * received re-emmit them as remote operations to all the ports
  */
 let usersConnected = [];
-let maxUsersAllowed =3;
+const maxUsersAllowed =3;//ideally to be loaded from the config file
+let indexCurrent=1;
 io.on("connection", (socket) => {
   /**
    * check if number of users added are less than max allowed users. 
@@ -26,12 +27,26 @@ io.on("connection", (socket) => {
   {
         usersConnected.push(socket.id);
         if(usersConnected.length<maxUsersAllowed){
-          socket.emit("message","waiting for players to join");}
+          socket.emit("message","waiting for players to join");
+        }
         
-          if(usersConnected.length==maxUsersAllowed){
+          if(usersConnected.length===maxUsersAllowed){
           io.emit("message","all players have joined start the game")
-          //io.emit("start",false);
           io.emit("user-turn", usersConnected[0]);
+        
+          let timer =setInterval(()=>{
+            io.emit("start",true);
+            io.emit("user-turn", usersConnected[indexCurrent]);
+            ++indexCurrent;
+            if(indexCurrent===maxUsersAllowed+1){
+              io.emit("start",true);
+              clearInterval(timer)
+            }
+          }, 10000);
+        
+
+          //io.emit("start",false);
+          
       }
 
         socket.on("new-operations", (data) => {
@@ -46,6 +61,18 @@ io.on("connection", (socket) => {
         socket.disconnect();
         return;
   }
+  socket.on("disconnect", () => {
+    usersConnected = usersConnected.filter(item => item !== socket.id)
+      
+   if(usersConnected.length===0){
+     indexCurrent=1;
+   }
+   
+});
+
+
+
+
   });
 
 http.listen(8080,()=> console.log(`listenting on http:\\localhost:8080`))
