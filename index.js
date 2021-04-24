@@ -1,10 +1,18 @@
-const { isFunction } = require("util");
+/**
+ * Create an express server attach Socket.io to it and allow cors
+ * so that it doesn't give you any headaches
+ * 
+ */
 
 const app = require("express")();
 const http = require("http").Server(app);
 const io = require("socket.io")(http,{
     cors:{origin:"*"}
 });
+
+/**
+ * open connections and look for any new-operations being emiited from client side and once received remmit them as operations
+ */
 
 io.on("connection", (socket) => {
     socket.on("new-operations", (data) => {
