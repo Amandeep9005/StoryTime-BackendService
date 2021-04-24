@@ -11,13 +11,27 @@ const io = require("socket.io")(http,{
 });
 
 /**
- * open connections and look for any new-operations being emiited from client side and once received remmit them as operations
+ * open connections and look for any new-operations being emiited from client side and once 
+ * received re-emmit them as remote operations to all the ports
  */
-
+let usersConnected = [];
+let maxUsersAllowed =5;
 io.on("connection", (socket) => {
+  if (usersConnected.length<maxUsersAllowed)
+  {
+    usersConnected.push(socket.id);
+  console.log("A user is connected",socket);
     socket.on("new-operations", (data) => {
+      
+  console.log("A user sends data",data);
       io.emit("new-remote-operations", data);
     });
+  }
+  else{
+    socket.emit("error", "Maximum allowed users limit reached");
+        socket.disconnect();
+        return;
+  }
   });
 
 http.listen(8080,()=> console.log(`listenting on http:\\localhost:8080`))
