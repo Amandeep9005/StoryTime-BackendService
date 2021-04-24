@@ -27,9 +27,11 @@ io.on("connection", (socket) => {
         usersConnected.push(socket.id);
         if(usersConnected.length<maxUsersAllowed){
           socket.emit("message","waiting for players to join");}
-        else{
+        
+          if(usersConnected.length==maxUsersAllowed){
           io.emit("message","all players have joined start the game")
-          io.emit("start",false);
+          //io.emit("start",false);
+          io.emit("user-turn", usersConnected[0]);
       }
 
         socket.on("new-operations", (data) => {
