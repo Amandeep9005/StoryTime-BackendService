@@ -25,18 +25,19 @@ io.on("connection", (socket) => {
    */
   if (usersConnected.length<maxUsersAllowed)
   {
-        usersConnected.push(socket.id);
+        usersConnected.push(socket.id);  //add a new socket connection to usersConnected Array
         if(usersConnected.length<maxUsersAllowed){
           socket.emit("message","waiting for players to join");
         }
         
           if(usersConnected.length===maxUsersAllowed){
           io.emit("message","all players have joined start the game")
-          io.emit("user-turn", usersConnected[0]);
+          io.emit("user-turn", {socket:usersConnected[0],msg:"your turn"});
+         
         
           let timer =setInterval(()=>{
             io.emit("start",true);
-            io.emit("user-turn", usersConnected[indexCurrent]);
+            io.emit("user-turn", {socket:usersConnected[indexCurrent],msg:"your turn"});
             ++indexCurrent;
             if(indexCurrent===maxUsersAllowed+1){
               io.emit("start",true);
@@ -45,7 +46,6 @@ io.on("connection", (socket) => {
           }, 10000);
         
 
-          //io.emit("start",false);
           
       }
 
