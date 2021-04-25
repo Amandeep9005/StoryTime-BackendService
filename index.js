@@ -50,8 +50,6 @@ io.on("connection", (socket) => {
       }
 
         socket.on("new-operations", (data) => {
-      
-        console.log("A user sends data",data);
         io.emit("new-remote-operations", data);
     });
   
