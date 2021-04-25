@@ -40,6 +40,8 @@ io.on("connection", (socket) => {
             io.emit("user-turn", {socket:usersConnected[indexCurrent],msg:"your turn"});//emit a message to next socket that its your turn and make it editable
             ++indexCurrent;
             if(indexCurrent===maxUsersAllowed+1){
+              usersConnected=[];
+              indexCurrent=1;
               io.emit("game-over");//times up game over
               clearInterval(timer)
             }
@@ -59,6 +61,11 @@ io.on("connection", (socket) => {
         socket.disconnect();
         return;
   }
+  
+  socket.on('end', function (){
+    socket.disconnect(0);
+});
+
   socket.on("disconnect", () => {
     usersConnected = usersConnected.filter(item => item !== socket.id)
       
