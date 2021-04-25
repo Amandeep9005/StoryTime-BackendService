@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
   {
         usersConnected.push(socket.id);  //add a new socket connection to usersConnected Array
         if(usersConnected.length<maxUsersAllowed){
-          socket.emit("message","waiting for players to join");
+          socket.emit("message","waiting for players to join");//emit a message when all the users are not yet joined
         }
         
           if(usersConnected.length===maxUsersAllowed){
@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
             io.emit("user-turn", {socket:usersConnected[indexCurrent],msg:"your turn"});
             ++indexCurrent;
             if(indexCurrent===maxUsersAllowed+1){
-              io.emit("start",true);
+              io.emit("game-over");
               clearInterval(timer)
             }
           }, 10000);
