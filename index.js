@@ -31,16 +31,16 @@ io.on("connection", (socket) => {
         }
         
           if(usersConnected.length===maxUsersAllowed){
-          io.emit("message","all players have joined start the game")
-          io.emit("user-turn", {socket:usersConnected[0],msg:"your turn"});
+          io.emit("message","all players have joined start the game")//emit a message when all the users have joined
+          io.emit("user-turn", {socket:usersConnected[0],msg:"your turn"});//emit a message to 1st socket that its your turn and make it editable
          
         
           let timer =setInterval(()=>{
-            io.emit("start",true);
-            io.emit("user-turn", {socket:usersConnected[indexCurrent],msg:"your turn"});
+            io.emit("start",true);//times up all the sockets are uneditable now
+            io.emit("user-turn", {socket:usersConnected[indexCurrent],msg:"your turn"});//emit a message to next socket that its your turn and make it editable
             ++indexCurrent;
             if(indexCurrent===maxUsersAllowed+1){
-              io.emit("game-over");
+              io.emit("game-over");//times up game over
               clearInterval(timer)
             }
           }, 10000);
