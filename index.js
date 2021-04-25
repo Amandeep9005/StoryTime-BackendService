@@ -15,7 +15,7 @@ const io = require("socket.io")(http,{
  * received re-emmit them as remote operations to all the ports
  */
 let usersConnected = [];
-const maxUsersAllowed =3;//ideally to be loaded from the config file
+const maxUsersAllowed =5;//ideally to be loaded from the config file
 let indexCurrent=1;
 io.on("connection", (socket) => {
   /**
